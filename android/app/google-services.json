@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "804235576999",
+    "firebase_url": "https://two-factor-authorizer.firebaseio.com",
+    "project_id": "two-factor-authorizer",
+    "storage_bucket": "two-factor-authorizer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804235576999:android:036c48d7fa6d0958bdfd82",
+        "android_client_info": {
+          "package_name": "com.example.twofactorauthorizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804235576999-jh2jb7cqplnome5pmh3kanb0gs3m0iu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3p49N95AGUA6iQ59XOcONDJ7uzEj378I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804235576999-jh2jb7cqplnome5pmh3kanb0gs3m0iu6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
