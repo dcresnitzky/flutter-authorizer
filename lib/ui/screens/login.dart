@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twofactorauthorizer/models/auth.dart';
 import 'package:twofactorauthorizer/ui/widget/progress.dart';
+import 'dart:developer' as developer;
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -17,10 +18,7 @@ class LoginScreen extends StatelessWidget {
             children: [
               Text(
                 'Welcome',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .display4,
+                style: Theme.of(context).textTheme.display4,
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -40,13 +38,17 @@ class LoginScreen extends StatelessWidget {
                 color: Colors.yellow,
                 child: Text('ENTER'),
                 onPressed: () {
-                  authModel.toggleLoading();
-                  authModel.auth.login('dcresnitzky@gmail.com', 'daniel').then((user) {
-                    Navigator.pushNamed(context, '/home');
-                  }).catchError((exception) {
-                    showError(context, exception.toString());
+//                  authModel.toggleLoading();
+                  _onLoading(context, () {
+                    authModel.auth
+                        .login('dcresnitzky@gmail.com', 'daniel')
+                        .then((user) {
+                      Navigator.pushNamed(context, '/home');
+                    }).catchError((exception) {
+                      showError(context, exception.toString());
+                    });
                   });
-                  authModel.toggleLoading();
+//                  authModel.toggleLoading();
                 },
               ),
               Consumer<AuthModel>(
@@ -78,5 +80,31 @@ class LoginScreen extends StatelessWidget {
             ]);
       },
     );
+  }
+
+  Future<void> _onLoading(BuildContext context, VoidCallback callback) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Loading"),
+            ],
+          ),
+        );
+      },
+    );
+    new Future.delayed(new Duration(seconds: 3), () {
+      try {
+        callback();
+      } catch (uiError) {
+        developer.log(uiError);
+      }
+      Navigator.pop(context); //pop dialog
+    });
   }
 }
