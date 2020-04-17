@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:twofactorauthorizer/auth/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthModel extends ChangeNotifier {
-  final Auth auth = Auth();
+class AuthModel {
+
+  final FirebaseAuth firebase = FirebaseAuth.instance;
+
   bool isLoading = false;
 
-  void toggleLoading() {
-    this.isLoading = !this.isLoading;
-
-    notifyListeners();
-  }
 }

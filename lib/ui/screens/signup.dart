@@ -6,7 +6,7 @@ import 'package:twofactorauthorizer/models/auth.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'dart:developer' as developer;
 
-class LoginScreen extends StatelessWidget {
+class SignUpScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   String _email, _password;
   Auth auth;
