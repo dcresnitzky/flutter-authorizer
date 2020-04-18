@@ -21,8 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return new Scaffold(
       body: Stack(children: <Widget>[
         _signUpForm
-            ? CreateAccountForm(toggleSignUpForm)
-            : LoginForm(toggleSignUpForm)
+            ? CreateAccountForm(toggleSignUpForm: toggleSignUpForm)
+            : LoginForm(toggleSignUpForm: toggleSignUpForm)
       ]),
     );
   }

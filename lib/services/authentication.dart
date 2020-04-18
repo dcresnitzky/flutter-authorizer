@@ -44,11 +44,9 @@ class AuthenticationService {
 
 
   Future<void> signIn(String email, String password) async {
-    FirebaseUser user;
     try {
-      AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
+      await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      user = result.user;
     } catch (error) {
       switch (error.code) {
         case "ERROR_INVALID_EMAIL":

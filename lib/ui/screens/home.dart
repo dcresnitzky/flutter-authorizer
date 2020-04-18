@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
 
   Future<void> _signOut(context) async {
     try {
-      final auth  = await Provider.of<AuthenticationService>(context, listen: false);
+      final auth  = Provider.of<AuthenticationService>(context, listen: false);
       await auth.signOut();
     } catch (e) {
       print(e);

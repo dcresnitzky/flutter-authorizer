@@ -3,11 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:twofactorauthorizer/services/authentication.dart';
 
 class CreateAccountForm extends StatefulWidget {
-  Function toggleSignUpForm;
+  final Function toggleSignUpForm;
 
-  CreateAccountForm(toggleSignUpForm) {
-    this.toggleSignUpForm = toggleSignUpForm;
-  }
+  const CreateAccountForm({Key key, this.toggleSignUpForm}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _CreateAccountFormState();
