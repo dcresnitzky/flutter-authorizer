@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twofactorauthorizer/services/authentication.dart';
+import 'package:authorizor/services/authentication.dart';
 
 class LoginForm extends StatefulWidget {
   final Function toggleSignUpForm;
@@ -23,22 +23,23 @@ class _LoginFormState extends State<LoginForm> {
   // Perform login or signup
   void validateAndSubmit() async {
     final form = _formKey.currentState;
+
     if (form.validate()) {
       form.save();
       setState(() {
         _isLoading = true;
         _errorMessage = '';
       });
+
       final auth = Provider.of<AuthenticationService>(context, listen: false);
+
       try {
         await auth.signIn(_email, _password);
       } catch (error) {
-        _errorMessage = error;
-      } finally {
         setState(() {
           _isLoading = false;
-          _errorMessage = _errorMessage;
-          _formKey.currentState.reset();
+          _errorMessage = error;
+          FocusScope.of(context).unfocus();
         });
       }
     }
@@ -61,11 +62,11 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return new Scaffold(
         body: Stack(
-          children: <Widget>[
-            _showForm(),
-            _showCircularProgress(),
-          ],
-        ));
+      children: <Widget>[
+        _showForm(),
+        _showCircularProgress(),
+      ],
+    ));
   }
 
   Widget _showCircularProgress() {

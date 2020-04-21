@@ -1,18 +1,58 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
 import 'dart:async';
+import 'package:authorizor/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:authorizor/repositories/user.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 enum authProblems { UserNotFound, PasswordNotValid, NetworkError }
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String errorMessage;
+  final UserRepository _userRepository = UserRepository();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  StreamController<FirebaseUser> _streamController;
+  User currentUser;
 
-  Future<String> signUp(String email, String password) async {
-    FirebaseUser user;
+  AuthenticationService() {
+    _streamController = new StreamController();
+
+    _firebaseAuth.onAuthStateChanged.listen((firebaseUser) {
+      if (firebaseUser != null) {
+        _userRepository.get(firebaseUser.uid).then((User user) async {
+          //todo: move to fcm function
+          if(Platform.isIOS) {
+            await _firebaseMessaging.requestNotificationPermissions(
+              const IosNotificationSettings(
+                  sound: true, badge: true, alert: true, provisional: false),
+            );
+          }
+          String fcmToken = await _firebaseMessaging.getToken();
+
+          if (user == null) {
+            await _userRepository.create(firebaseUser.uid, fcmToken);
+          } else if (user != null && user.fcmToken != fcmToken) {
+            await _userRepository.update(firebaseUser.uid, fcmToken);
+          }
+          currentUser = user;
+          _streamController.add(firebaseUser);
+        }).catchError((error) {
+          print(error);
+        });
+      } else {
+        currentUser = null;
+        _streamController.add(null);
+      }
+    }, onError: (error) {
+      print(error);
+    });
+  }
+
+  Future<void> signUp(String email, String password) async {
     try {
-      AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
+      await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      user = result.user;
     } catch (error) {
       switch (error.code) {
         case "ERROR_OPERATION_NOT_ALLOWED":
@@ -38,10 +78,7 @@ class AuthenticationService {
     if (errorMessage != null) {
       return Future.error(errorMessage);
     }
-
-    return user.uid;
   }
-
 
   Future<void> signIn(String email, String password) async {
     try {
@@ -94,4 +131,6 @@ class AuthenticationService {
     FirebaseUser user = await _firebaseAuth.currentUser();
     return user.isEmailVerified;
   }
+
+  Stream<FirebaseUser> get onAuthStateChanged => _streamController.stream;
 }

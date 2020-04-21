@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twofactorauthorizer/services/authentication.dart';
-import 'package:twofactorauthorizer/ui/screens/landing-page.dart';
-import 'package:twofactorauthorizer/ui/theme.dart';
+import 'package:authorizor/repositories/authorization.dart';
+import 'package:authorizor/services/authentication.dart';
+import 'package:authorizor/ui/screens/landing-page.dart';
+import 'package:authorizor/ui/theme.dart';
 
-void main() => runApp(AuthorizerApp());
+void main() => runApp(AuthorizorApp());
 
-class AuthorizerApp extends StatelessWidget {
+class AuthorizorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider<AuthenticationService>(
-      create: (_) => new AuthenticationService(),
+    return MultiProvider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: '2Factor Authorizer',
+        title: 'Authorizor',
         theme: appTheme,
-        home: LandingPage(),
+        home: LandingPageScreen(),
       ),
+      providers: [
+        Provider<AuthenticationService>(create: (_) => AuthenticationService()),
+        Provider<AuthorizationRepository>(
+            create: (_) => AuthorizationRepository())
+      ],
     );
   }
 }

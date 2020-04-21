@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twofactorauthorizer/ui/forms/create-account.dart';
-import 'package:twofactorauthorizer/ui/forms/login.dart';
+import 'package:authorizor/ui/forms/create-account.dart';
+import 'package:authorizor/ui/forms/login.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

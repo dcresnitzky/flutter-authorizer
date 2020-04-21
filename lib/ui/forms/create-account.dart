@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twofactorauthorizer/services/authentication.dart';
+import 'package:authorizor/services/authentication.dart';
 
 class CreateAccountForm extends StatefulWidget {
   final Function toggleSignUpForm;
@@ -33,12 +33,11 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
       try {
         await auth.signUp(_email, _password);
       } catch (error) {
-        _errorMessage = error;
-      } finally {
         setState(() {
           _isLoading = false;
-          _errorMessage = _errorMessage;
+          _errorMessage = error;
           _formKey.currentState.reset();
+          FocusScope.of(context).unfocus();
         });
       }
     }
