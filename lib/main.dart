@@ -1,6 +1,7 @@
+import 'package:authorizor/repositories/authorization.dart';
+import 'package:authorizor/services/authorization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:authorizor/repositories/authorization.dart';
 import 'package:authorizor/services/authentication.dart';
 import 'package:authorizor/ui/screens/landing-page.dart';
 import 'package:authorizor/ui/theme.dart';
@@ -19,8 +20,8 @@ class AuthorizorApp extends StatelessWidget {
       ),
       providers: [
         Provider<AuthenticationService>(create: (_) => AuthenticationService()),
-        Provider<AuthorizationRepository>(
-            create: (_) => AuthorizationRepository())
+        Provider<AuthorizationService>(
+            create: (_) => AuthorizationService(AuthorizationRepository())),
       ],
     );
   }

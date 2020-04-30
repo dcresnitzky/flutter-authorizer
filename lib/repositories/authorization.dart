@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final CollectionReference authorizationCollection = Firestore.instance.collection('authorization');
+final CollectionReference authorizationCollection =
+    Firestore.instance.collection('authorization');
 
 class AuthorizationRepository {
-
   Stream<QuerySnapshot> list(uid, {int offset, int limit}) {
-    Stream<QuerySnapshot> snapshots = authorizationCollection.document(uid).collection('pending').snapshots();
+    Stream<QuerySnapshot> snapshots = authorizationCollection
+        .document(uid)
+        .collection('pending')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
 
     if (offset != null) {
       snapshots = snapshots.skip(offset);
@@ -21,7 +25,8 @@ class AuthorizationRepository {
 
   Future<dynamic> delete(String id) async {
     final TransactionHandler deleteTransaction = (Transaction tx) async {
-      final DocumentSnapshot ds = await tx.get(authorizationCollection.document(id));
+      final DocumentSnapshot ds =
+          await tx.get(authorizationCollection.document(id));
 
       await tx.delete(ds.reference);
       return {'deleted': true};

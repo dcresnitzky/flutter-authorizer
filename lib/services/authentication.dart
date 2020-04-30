@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:authorizor/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,17 +16,14 @@ class AuthenticationService {
 
   AuthenticationService() {
     _streamController = new StreamController();
-
     _firebaseAuth.onAuthStateChanged.listen((firebaseUser) {
       if (firebaseUser != null) {
         _userRepository.get(firebaseUser.uid).then((User user) async {
-          //todo: move to fcm function
-          if(Platform.isIOS) {
-            await _firebaseMessaging.requestNotificationPermissions(
-              const IosNotificationSettings(
-                  sound: true, badge: true, alert: true, provisional: false),
-            );
-          }
+
+          await _firebaseMessaging.requestNotificationPermissions(
+            const IosNotificationSettings(
+                sound: true, badge: true, alert: true, provisional: false),
+          );
           String fcmToken = await _firebaseMessaging.getToken();
 
           if (user == null) {

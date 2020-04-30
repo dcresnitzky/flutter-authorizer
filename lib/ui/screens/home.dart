@@ -1,10 +1,9 @@
-import 'package:http/http.dart' as http;
-import 'package:barcode_scan/barcode_scan.dart';
+import 'package:authorizor/services/register.dart';
+import 'package:authorizor/ui/messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:authorizor/services/authentication.dart';
 import 'package:authorizor/ui/lists/authorization.dart';
-import 'package:device_info/device_info.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,8 +12,11 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RegisterService {
+  final Messaging messaging = Messaging();
   AuthenticationService auth;
+
+  final GlobalKey key = GlobalKey();
 
   Future<void> _signOut(context) async {
     try {
@@ -24,52 +26,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _scan() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  void _showSnackBar(String message) {
+    ScaffoldState state = key.currentState;
 
-    AndroidDeviceInfo info = await deviceInfo.androidInfo;
-
-    String url;
-
-    if (info.isPhysicalDevice) {
-      String scanResult = await BarcodeScanner.scan();
-
-      RegExp exp = new RegExp(
-          r"https:\/\/young-bayou-14201\.herokuapp\.com\/client\/user");
-      bool valid = exp.hasMatch(scanResult);
-
-      if (valid) {
-        url = scanResult;
-      }
-    } else {
-      url = 'young-bayou-14201.herokuapp.com';
-    }
-
-    http.Response response = await http
-        .get(Uri.https(url, '/client/user', {"uid": auth.currentUser.uid}));
-
-    print(response.body);
-  }
-
-  Widget _logoutButton() {
-    return FlatButton(
-      child: Text(
-        'Logout',
-        style: TextStyle(
-          fontSize: 18.0,
-          color: Colors.white,
-        ),
-      ),
-      onPressed: () {
-        _signOut(context);
-      },
-    );
+    state.showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
     auth = Provider.of<AuthenticationService>(context, listen: false);
+
     return Scaffold(
+        key: key,
         appBar: AppBar(
           title: Text('Authorizor'),
           actions: <Widget>[
@@ -77,7 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                _scan();
+                register(auth.currentUser.uid).then((result) => _showSnackBar(
+                    result ? 'Registered to TEST_CLIENT' : 'Invalid target'));
               },
             ),
             IconButton(
@@ -91,13 +60,3 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Center(child: AuthorizationList()));
   }
 }
-
-class MenuItem {
-  const MenuItem({this.title});
-
-  final String title;
-}
-
-const List<MenuItem> menuItens = const <MenuItem>[
-  const MenuItem(title: 'Logout'),
-];
